@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* .animate-fade-in {
+            animation: fadeIn 1.5s ease-out;
+        } */
+        
+        .nav-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            transition: transform 0.2s;
+            z-index: 9999;
+        }
+
+        .nav-area:hover ~ .nav-cursor {
+            transform: scale(3);
+            background: white;
+            mix-blend-mode: difference;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: scale(1.1) rotate(5deg);
+            text-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+
+        @keyframes stethoscope {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(-50px);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.2) translateY(0);
+            }
+            75% {
+                transform: scale(0.9) translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .logo-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .medical-logo {
+            width: 150px;
+            height: 150px;
+            animation: stethoscope 2s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div id="root"></div>
+    <script type="text/babel">
+        function App() {
+            const [showSignup, setShowSignup] = React.useState(false);
+            const [showLogin, setShowLogin] = React.useState(false);
+            const [cursorPos, setCursorPos] = React.useState({ x: 0, y: 0 });
+            const [showLogo, setShowLogo] = React.useState(true);
+
+
+            React.useEffect(() => {
+                const handleMouseMove = (e) => {
+                    setCursorPos({ x: e.clientX, y: e.clientY });
+                };
+                window.addEventListener('mousemove', handleMouseMove);
+
+                // Hide logo animation after 2 seconds
+                const timer = setTimeout(() => {
+                    setShowLogo(false);
+                }, 2000);
+
+                return () => {
+                    window.removeEventListener('mousemove', handleMouseMove);
+                    clearTimeout(timer);
+                };
+            }, []);
+
+            const handleSymptomCheckerClick = () => {
+                window.open("./symptom_checker.html", "_self");
+            };
+
+            const handleDoctorsClick = () => {
+                window.location.href = "doctors.html";
+            };
+
+            const scrollToServices = () => {
+                document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const scrollToFooter = () => {
+                document.getElementById('footer').scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const SignupForm = () => (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center animate-fade-in">
+                    <div className="bg-white p-8 rounded-lg shadow-xl w-96 animate-fade-in">
+                        <h2 className="text-2xl font-bold text-green-600 mb-6">Sign Up</h2>
+                        <form className="space-y-4">
+                            <div>
+                                <label className="block text-gray-700 mb-2">Name</label>
+                                <input type="text" className="w-full p-2 border rounded-lg focus:border-green-600 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 mb-2">Age</label>
+                                <input type="number" className="w-full p-2 border rounded-lg focus:border-green-600 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 mb-2">Gender</label>
+                                <select className="w-full p-2 border rounded-lg focus:border-green-600 focus:outline-none">
+                                    <option>Select Gender</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 mb-2">Email</label>
+                                <input type="email" className="w-full p-2 border rounded-lg focus:border-green-600 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 mb-2">Password</label>
+                                <input type="password" className="w-full p-2 border rounded-lg focus:border-green-600 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 mb-2">Confirm Password</label>
+                                <input type="password" className="w-full p-2 border rounded-lg focus:border-green-600 focus:outline-none" />
+                            </div>
+                            <div className="flex space-x-4">
+                                <button type="submit" className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                                    Sign Up
+                                </button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowSignup(false)}
+                                    className="w-full border-2 border-green-600 text-green-600 py-2 rounded-lg hover:bg-green-600 hover:text-white transition duration-300"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+
+            
+            const LoginForm = () => {
+    const [formData, setFormData] = React.useState({
+        email: '',
+        password: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        fetch("http://localhost:5000/api/users/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: formData.email,
+                password: formData.password
+            })
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result && result.message) {
+                    alert(`✅ ${result.message}`);
+                    setShowLogin(false);
+                } else {
+                    alert("✅ Login successful!");
+                    setShowLogin(false);
+                }
+            })
+            .catch(error => {
+                console.error("❌ Error:", error);
+                alert("⚠️ Something went wrong. Please try again.");
+            });
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center animate-fade-in">
+            <div className="bg-white p-8 rounded-lg shadow-xl w-96 animate-fade-in">
+                <h2 className="text-2xl font-bold text-green-600 mb-6">Login</h2>
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                    <div>
+                        <label className="block text-gray-700 mb-2">Email</label>
+                        <input 
+                            name="email" 
+                            type="email" 
+                            value={formData.email} 
+                            onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg focus:border-green-600 focus:outline-none" 
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 mb-2">Password</label>
+                        <input 
+                            name="password" 
+                            type="password" 
+                            value={formData.password} 
+                            onChange={handleChange} 
+                            className="w-full p-2 border rounded-lg focus:border-green-600 focus:outline-none" 
+                            required
+                        />
+                    </div>
+                    <div className="flex space-x-4">
+                        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                            Login
+                        </button>
+                        <button 
+                            type="button" 
+                            onClick={() => setShowLogin(false)}
+                            className="w-full border-2 border-green-600 text-green-600 py-2 rounded-lg hover:bg-green-600 hover:text-white transition duration-300"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+
+            return (
+                <div className="min-h-screen bg-white">
+                    {/* Navigation */}
+                    <nav className="bg-green-600 p-4 nav-area">
+                        <div className="container mx-auto flex justify-between items-center">
+                            <h1 className="text-white text-2xl font-bold nav-link">Vitality</h1>
+                            <div className="space-x-4">
+                                <a href="#" className="text-white hover:text-green-200 nav-link">Home</a>
+                                <a href="#" onClick={scrollToServices} className="text-white hover:text-green-200 nav-link">Services</a>
+                                <a href="#" onClick={scrollToFooter} className="text-white hover:text-green-200 nav-link">Contact</a>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Hero Section */}
+                    <div className="container mx-auto px-4 py-16 animate-fade-in">
+                        <div className="flex flex-col md:flex-row items-center">
+                            <div className="md:w-1/2 mb-8 md:mb-0">
+                                <h2 className="text-4xl md:text-6xl font-bold text-green-600 mb-4">
+                                    Your Health, Our Priority
+                                </h2>
+                                <p className="text-gray-600 text-lg mb-8">
+                                    Experience world-class healthcare services with our team of expert professionals.
+                                    We're here to take care of you and your loved ones.
+                                </p>
+                                <div className="space-x-4">
+                                    <button 
+                                        onClick={() => setShowSignup(true)}
+                                        className="bg-green-600 text-white px-8 py-3 rounded-full hover:bg-green-700 transition duration-300"
+                                    >
+                                        Signup
+                                    </button>
+                                    <button 
+                                        onClick={() => setShowLogin(true)}
+                                        className="border-2 border-green-600 text-green-600 px-8 py-3 rounded-full hover:bg-green-600 hover:text-white transition duration-300"
+                                    >
+                                        Login
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="md:w-1/2 animate-fade-in" style={{animationDelay: '0.5s'}}>
+                                <img 
+                                    src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                                    alt="Healthcare" 
+                                    className="rounded-lg shadow-2xl"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Features Section */}
+                    <div id="services" className="bg-green-50 py-16 animate-fade-in" style={{animationDelay: '1s'}}>
+                        <div className="container mx-auto px-4">
+                            <h3 className="text-3xl font-bold text-center text-green-600 mb-12">
+                                Our Services
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div className="bg-white p-6 rounded-lg shadow-lg hover:transform hover:scale-105 transition duration-300 ease-in-out"><a href="./chatbot.html">
+                                    <div className="text-green-600 text-4xl mb-4">🩺</div>
+                                    <h4 className="text-xl font-semibold mb-2">Medical AI Assistant</h4>
+                                    <p className="text-gray-600">Get free AI assistance about your medical problems.</p>
+                                    </a>
+                                </div>
+                                
+                                <div className="bg-white p-6 rounded-lg shadow-lg hover:transform hover:scale-105 transition duration-300 ease-in-out" onClick={handleDoctorsClick}>
+                                    <div className="text-green-600 text-4xl mb-4">👨‍⚕️</div>
+                                    <h4 className="text-xl font-semibold mb-2">Curated Doctors</h4>
+                                    <p className="text-gray-600">Access to specialized healthcare professionals.</p>
+                                </div>
+                                
+                               <div className="bg-white p-6 rounded-lg shadow-lg hover:transform hover:scale-105 transition duration-300 ease-in-out cursor-pointer group" > <a href="./symptoms.html">
+                               
+                                    <div className="text-green-600 text-4xl mb-4 group-hover:animate-bounce">🏥</div>
+                                    <h4 className="text-xl font-semibold mb-2 group-hover:text-green-600 transition-colors duration-300">
+                                        Symptom Checker
+                                    </h4>
+                                    <p className="text-gray-600 group-hover:text-green-500 transition-colors duration-300">
+                                        Upload your symptoms and get instant AI-powered health insights.
+                                    </p>
+                                </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <footer id="footer" className="bg-white py-8 border-t">
+                        <div className="container mx-auto px-4">
+                            <div className="text-center">
+                                <h3 className="text-2xl font-bold text-green-600 mb-4">Contact Us</h3>
+                                <div className="space-y-2">
+                                    <p className="text-gray-600 hover:text-green-600 transition-colors duration-300">
+                                        <a href="mailto:support@vitality.com">support@vitality.com</a>
+                                    </p>
+                                    <p className="text-gray-600 hover:text-green-600 transition-colors duration-300">
+                                        <a href="mailto:doctors@vitality.com">doctors@vitality.com</a>
+                                    </p>
+                                    <p className="text-gray-600 hover:text-green-600 transition-colors duration-300">
+                                        <a href="mailto:business@vitality.com">business@vitality.com</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+
+                    {showSignup && <SignupForm />}
+                    {showLogin && <LoginForm />}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+
+<style>
+    .login-form {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translate(-50%, -60%);
+            opacity: 0;
+        }
+        to {
+            transform: translate(-50%, -50%);
+            opacity: 1;
+        }
+    }
+</style>
